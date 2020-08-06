@@ -183,10 +183,9 @@ func instrumentPackage(args []string) ([]string, error) {
 
 	///usr/local/go/pkg/tool/darwin_amd64/link
 	pkgPath := filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(args[0]))), filepath.Base(filepath.Dir(args[0])))
-	fmt.Println(pkgPath)
 	/// create importcfg for compiling covcollect
 	covImports := "cov_importcfg"
-	pathToCovCollect := os.Getenv("GOPATH") + "/src/github.com/muratekici/go-function-coverage/pkg/covcollect/covcollect.go "
+	pathToCovCollect := os.Getenv("GOPATH") + "/src/github.com/muratekici/deneme/pkg/covcollect/covcollect.go"
 
 	catArgs := []string{"bash", "-c", "cat >" + filepath.Join(buildDir, covImports) + ` << 'EOF'
 packagefile fmt=` + pkgPath + `/fmt.a
@@ -195,13 +194,10 @@ packagefile os=` + pkgPath + `/os.a
 packagefile time=` + pkgPath + `/time.a
 EOF`}
 
-	fmt.Println(catArgs)
 	executeCommand(catArgs)
-
 	covCollectArgs := []string{args[0], "-o", filepath.Join(buildDir, "cov_pkg.a"), "-p", "covcollect", "-complete", "-std", "-importcfg=" + filepath.Join(buildDir, covImports), "-pack", pathToCovCollect}
-	fmt.Println(covCollectArgs)
+
 	executeCommand(covCollectArgs)
-	fmt.Println("compile cov bilmemne")
 
 	f, err := os.OpenFile(opt.importCfg, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
